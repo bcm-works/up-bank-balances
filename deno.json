@@ -1,4 +1,5 @@
 {
+  "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
   "fmt": {
     "include": [
       "src/",
@@ -24,7 +25,7 @@
     "@std/fs": "jsr:@std/fs@^1.0.24",
     "@std/path": "jsr:@std/path@^1.1.6"
   },
-  "nodeModulesDir": "none",
+  "nodeModulesDir": "auto",
   "tasks": {
     "cli": {
       "description": "Show your bank account balances in the terminal.",
