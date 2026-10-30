@@ -10,9 +10,9 @@ export async function AccountSummary(): Promise<string[]> {
     {
       method: "GET",
       headers: {
-        "Authorization": "Bearer " + App.ApiToken,
-      },
-    },
+        "Authorization": "Bearer " + App.ApiToken
+      }
+    }
   );
 
   const ApiResponseJson = await ApiResponse.json();
@@ -24,7 +24,7 @@ export async function AccountSummary(): Promise<string[]> {
     // Remove all emojis from account names
     const AccountDisplayName = AccountInfo.displayName.replace(
       /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
-      "",
+      ""
     ).trim();
 
     FinalOutput.push(AccountDisplayName + ": " + App.CurrencySymbol + AccountInfo.balance.value);
@@ -40,9 +40,9 @@ export async function MainAccount(): Promise<string> {
     {
       method: "GET",
       headers: {
-        "Authorization": "Bearer " + App.ApiToken,
-      },
-    },
+        "Authorization": "Bearer " + App.ApiToken
+      }
+    }
   );
 
   const ApiResponseJson = await ApiResponse.json();

@@ -55,7 +55,7 @@ Deno.copyFileSync(AssetsStyles, PublicStyles);
 console.log(
   '%cServing "public" directory at %chttp://localhost:8001',
   "color: green",
-  "color: blue",
+  "color: blue"
 );
 
 const app = new Application();
@@ -63,7 +63,7 @@ app.use(async (context, next) => {
   try {
     await context.send({
       root: PublicDirectory,
-      index: "index.html",
+      index: "index.html"
     });
   } catch (error) {
     if (error) {

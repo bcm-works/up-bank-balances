@@ -4,7 +4,7 @@ import { load } from "@std/dotenv";
 
 await load({
   envPath: ".up.env",
-  export: true,
+  export: true
 });
 
 export const ApiToken: string = Deno.env.get("UP_PERSONAL_ACCESS_TOKEN") || "";
