@@ -19,15 +19,15 @@
       "command": "deno run --allow-net --allow-read --allow-env src/cli.ts"
     },
     "web": {
-      "description": "Start a web server to display your bank account balances in a web browser.",
+      "description": "Show your bank account balances in a web browser.",
       "command": "deno run --allow-net --allow-write=./ --allow-read --allow-env src/web.ts"
     },
     "deps": {
-      "description": "Update the project's third-party dependencies.",
+      "description": "Update Deno dependencies.",
       "command": "deno outdated --update --latest || true"
     },
     "check": {
-      "description": "Run Deno's linting and formatting tools.",
+      "description": "Run Deno linting and formatting tools.",
       "command": "deno lint && deno fmt"
     }
   },
