@@ -19,10 +19,10 @@
     "-/": "./src/",
     "-/up/": "./src/up-bank/",
     "@oak/oak": "jsr:@oak/oak@^17.2.0",
-    "moment": "npm:moment@^2.30.1",
-    "@std/dotenv": "jsr:@std/dotenv@^0.225.7",
+    "moment": "npm:moment@^2.31.0",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.8",
     "@std/fs": "jsr:@std/fs@^1.0.24",
-    "@std/path": "jsr:@std/path@^1.1.5"
+    "@std/path": "jsr:@std/path@^1.1.6"
   },
   "nodeModulesDir": "none",
   "tasks": {
