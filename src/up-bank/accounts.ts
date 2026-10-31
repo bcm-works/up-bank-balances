@@ -1,25 +1,20 @@
 import * as App from "-/constants.ts";
+import { fetchAll } from "-/up/api.ts";
+import type { AccountResource } from "-/up/types.ts";
+
+export async function listAccounts(): Promise<AccountResource[]> {
+  return await fetchAll<AccountResource>("/accounts?page%5Bsize%5D=100");
+}
 
 export async function AccountSummary(): Promise<string[]> {
   // deno-lint-ignore prefer-const
   let FinalOutput: string[] = [];
 
   // Get a list of all open accounts
-  const ApiResponse = await fetch(
-    App.ApiUrl + "/accounts",
-    {
-      method: "GET",
-      headers: {
-        "Authorization": "Bearer " + App.ApiToken
-      }
-    }
-  );
+  const ApiResponseJsonData = await listAccounts();
 
-  const ApiResponseJson = await ApiResponse.json();
-  const ApiResponseJsonData = ApiResponseJson.data;
-
-  for (const index in ApiResponseJsonData) {
-    const AccountInfo = ApiResponseJsonData[index].attributes;
+  for (const Account of ApiResponseJsonData) {
+    const AccountInfo = Account.attributes;
 
     // Remove all emojis from account names
     const AccountDisplayName = AccountInfo.displayName.replace(
@@ -35,24 +30,13 @@ export async function AccountSummary(): Promise<string[]> {
 
 export async function MainAccount(): Promise<string> {
   // Get a list of all open accounts
-  const ApiResponse = await fetch(
-    App.ApiUrl + "/accounts",
-    {
-      method: "GET",
-      headers: {
-        "Authorization": "Bearer " + App.ApiToken
-      }
-    }
-  );
+  const ApiResponseJsonData = await listAccounts();
 
-  const ApiResponseJson = await ApiResponse.json();
-  const ApiResponseJsonData = ApiResponseJson.data;
-
-  for (const index in ApiResponseJsonData) {
-    const AccountInfo = ApiResponseJsonData[index].attributes;
+  for (const Account of ApiResponseJsonData) {
+    const AccountInfo = Account.attributes;
     if (AccountInfo.accountType == "TRANSACTIONAL" && AccountInfo.ownershipType == "INDIVIDUAL") {
       // This is the main individual debit account, use this ID
-      return ApiResponseJsonData[index].id;
+      return Account.id;
     }
   }
 

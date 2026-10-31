@@ -1,25 +1,22 @@
 import * as App from "-/constants.ts";
 import moment from "moment";
+import { fetchAll } from "-/up/api.ts";
+import type { TransactionResource } from "-/up/types.ts";
+
+export async function getTransactionsForAccount(BankAccountId: string): Promise<TransactionResource[]> {
+  return await fetchAll<TransactionResource>(
+    "/accounts/" + encodeURIComponent(BankAccountId) + "/transactions?page%5Bsize%5D=100"
+  );
+}
 
 export async function TransactionsForAccount(BankAccountId: string): Promise<string[]> {
   // deno-lint-ignore prefer-const
   let TransactionList: string[] = [];
 
-  const ApiResponse = await fetch(
-    App.ApiUrl + "/accounts/" + BankAccountId + "/transactions?page[size]=20",
-    {
-      method: "GET",
-      headers: {
-        "Authorization": "Bearer " + App.ApiToken
-      }
-    }
-  );
+  const ApiResponseJsonData = (await getTransactionsForAccount(BankAccountId)).slice(0, 20);
 
-  const ApiResponseJson = await ApiResponse.json();
-  const ApiResponseJsonData = ApiResponseJson.data;
-
-  for (const index in ApiResponseJsonData) {
-    const TransactionInfo = ApiResponseJsonData[index].attributes;
+  for (const Transaction of ApiResponseJsonData) {
+    const TransactionInfo = Transaction.attributes;
     const TransactionDate = moment(TransactionInfo.createdAt).fromNow();
 
     // Fix the output of debit transactions
