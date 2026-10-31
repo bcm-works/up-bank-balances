@@ -59,5 +59,10 @@
       "src/",
       "deno.json"
     ]
-  }
+  },
+  "exclude": [
+    "node_modules/",
+    ".vscode/",
+    "assets/"
+  ]
 }
