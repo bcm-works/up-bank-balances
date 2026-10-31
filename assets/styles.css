@@ -10,6 +10,27 @@ body {
   padding: 2rem 1rem 4rem;
 }
 
+.loading {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #555;
+  border-top-color: #79b8ff;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 a { color: #79b8ff; }
 
 header, .section-heading, .transaction-main, .transaction-meta {

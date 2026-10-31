@@ -66,7 +66,7 @@ function renderAccount(account: AccountResource, selected: boolean): string {
   </article>`;
 }
 
-function renderPage(
+function renderContent(
   accounts: AccountResource[],
   selectedAccountId: string,
   transactions: TransactionResource[]
@@ -75,8 +75,7 @@ function renderPage(
   const totalBaseUnits = accounts.reduce((total, account) => total + account.attributes.balance.valueInBaseUnits, 0);
   const total = (totalBaseUnits / 100).toFixed(2);
 
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bank Accounts</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"></head><body>
-    <header><div><h1>Bank Accounts</h1><p class="muted">Up account overview</p></div><a class="refresh" href="/?account=${
+  return `<header><div><h1>Bank Accounts</h1><p class="muted">Up account overview</p></div><a class="refresh" href="/?account=${
     encodeURIComponent(selectedAccountId)
   }">Refresh</a></header>
     <main>
@@ -102,7 +101,23 @@ function renderPage(
       "<p>No accounts found.</p>"
   }
       </section>
-    </main>
+    </main>`;
+}
+
+function renderLoadingPage(): string {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bank Accounts</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"></head><body>
+    <main id="app"><div class="loading" role="status"><span class="spinner" aria-hidden="true"></span><span>Loading account data…</span></div></main>
+    <script>
+      fetch("/api/accounts" + window.location.search)
+        .then((response) => {
+          if (!response.ok) throw new Error("Unable to load Up data");
+          return response.text();
+        })
+        .then((content) => { document.getElementById("app").outerHTML = content; })
+        .catch((error) => {
+          document.getElementById("app").innerHTML = "<h1>Unable to load Up data</h1><p>" + error.message + "</p><p><a href=\"/\">Try again</a></p>";
+        });
+    </script>
   </body></html>`;
 }
 
@@ -118,6 +133,12 @@ const app = new Application();
 app.use(async (context, next) => {
   const pathname = context.request.url.pathname;
   if (pathname === "/" || pathname === "/index.html") {
+    context.response.type = "html";
+    context.response.body = renderLoadingPage();
+    return;
+  }
+
+  if (pathname === "/api/accounts") {
     try {
       const accounts = await listAccounts();
       const requestedAccount = context.request.url.searchParams.get("account");
@@ -127,13 +148,10 @@ app.use(async (context, next) => {
       const transactions = selectedAccountId ? await getTransactionsForAccount(selectedAccountId) : [];
       context.response.headers.set("Cache-Control", "no-store");
       context.response.type = "html";
-      context.response.body = renderPage(accounts, selectedAccountId, transactions);
-    } catch (error) {
+      context.response.body = renderContent(accounts, selectedAccountId, transactions);
+    } catch {
       context.response.status = 502;
-      context.response.type = "html";
-      context.response.body = `<h1>Unable to load Up data</h1><p>${
-        escapeHtml(error instanceof Error ? error.message : "Unknown error")
-      }</p><p><a href="/">Try again</a></p>`;
+      context.response.body = "Unable to load Up data";
     }
     return;
   }
