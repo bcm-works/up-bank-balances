@@ -16,11 +16,11 @@
   "tasks": {
     "cli": {
       "description": "Show your bank account balances in the terminal.",
-      "command": "deno run --allow-net --allow-read --allow-env src/cli.ts"
+      "command": "deno run --env-file=.up.env --allow-net --allow-read --allow-env src/cli.ts"
     },
     "web": {
       "description": "Show your bank account balances in a web browser.",
-      "command": "deno run --allow-net --allow-write=./ --allow-read --allow-env src/web.ts"
+      "command": "mkdir -p ./public && deno run --env-file=.up.env --allow-net --allow-write=./ --allow-read --allow-env src/web.ts"
     },
     "deps": {
       "description": "Update Deno dependencies.",
