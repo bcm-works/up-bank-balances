@@ -101,8 +101,12 @@ section {
   margin-bottom: .3rem;
 }
 
-.balance {
+.account-balance {
   font-size: 1.5rem;
+}
+
+.account-type {
+  text-transform: capitalize;
 }
 
 select {

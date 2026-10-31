@@ -38,6 +38,7 @@ function renderTransaction(transaction: TransactionResource): string {
     ...tags.map((tag) => `<span class="badge">#${escapeHtml(tag)}</span>`),
     transaction.relationships.attachment?.data ? '<span class="badge">Receipt</span>' : ""
   ].join("");
+
   const details = [
     info.message?.trim(),
     info.transactionType,
@@ -45,7 +46,9 @@ function renderTransaction(transaction: TransactionResource): string {
     info.cardPurchaseMethod ? info.cardPurchaseMethod.method.replaceAll("_", " ") : "",
     info.note?.text
   ].filter((detail): detail is string => Boolean(detail)).map(escapeHtml).join(" · ");
+
   const date = new Date(info.createdAt).toLocaleString();
+
   const deepLink = info.deepLinkURL ? ` <a href="${escapeHtml(info.deepLinkURL)}">Open in Up</a>` : "";
 
   return `<li class="transaction">
@@ -61,8 +64,10 @@ function renderAccount(account: AccountResource, selected: boolean): string {
   const info = account.attributes;
   return `<article class="account-card ${selected ? "selected" : ""}">
     <h3>${escapeHtml(accountName(account))}</h3>
-    <strong class="balance">${escapeHtml(App.CurrencySymbol + info.balance.value)}</strong>
-    <span>${escapeHtml(info.accountType.replace("_", " "))} · ${escapeHtml(info.ownershipType.toLowerCase())}</span>
+    <strong class="account-balance">${escapeHtml(App.CurrencySymbol + info.balance.value)}</strong>
+    <span class="account-type">${escapeHtml(info.accountType.replace("_", " "))} · ${
+    escapeHtml(info.ownershipType)
+  }</span>
   </article>`;
 }
 
@@ -132,6 +137,7 @@ Deno.copyFileSync(AssetsStyles, join(PublicDirectory, "styles.css"));
 const app = new Application();
 app.use(async (context, next) => {
   const pathname = context.request.url.pathname;
+
   if (pathname === "/" || pathname === "/index.html") {
     context.response.type = "html";
     context.response.body = renderLoadingPage();
@@ -141,11 +147,15 @@ app.use(async (context, next) => {
   if (pathname === "/api/accounts") {
     try {
       const accounts = await listAccounts();
+
       const requestedAccount = context.request.url.searchParams.get("account");
+
       const selectedAccountId = accounts.some((account) => account.id === requestedAccount) ?
         requestedAccount as string :
         accounts.find((account) => account.attributes.accountType === "TRANSACTIONAL")?.id || accounts[0]?.id || "";
+
       const transactions = selectedAccountId ? await getTransactionsForAccount(selectedAccountId) : [];
+
       context.response.headers.set("Cache-Control", "no-store");
       context.response.type = "html";
       context.response.body = renderContent(accounts, selectedAccountId, transactions);
